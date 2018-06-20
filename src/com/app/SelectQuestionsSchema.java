@@ -1,0 +1,162 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.app;
+
+/**
+ *
+ * @author professional
+ */
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
+public class SelectQuestionsSchema extends javax.swing.JPanel {
+
+    /**
+     * Creates new form SelectQuestionsSchema
+     */
+    Connection con;
+    Statement s;
+    ResultSet rs;
+    Admin adminFrame;
+    CreateTemplatePanel createPanel;
+    int maxTempId;
+    int len;        
+    int questionsPerTopic;
+    int remainingQuestions;
+    int questionNumbers[];
+    JButton createButton;
+    JButton cancelButton;
+    JLabel totalQuestionsLabel;
+    JLabel userQuestionsLabel;
+    JLabel displayTotalLabel;
+    JLabel displayUserSelectedLabel;
+    CreateButtonActionListener createButtonActionListener;
+    CancelButtonActionListener cancelButtonActionListener;
+    JSpinnerChangeValueListener spinnerChangeValueListener;
+    JLabel[] topicsLabel;
+    JSpinner[] numberSpinner;
+    
+    public SelectQuestionsSchema(Admin adminFrame, CreateTemplatePanel createPanel) {
+        this.adminFrame = adminFrame;
+        this.createPanel = createPanel;
+        initComponents();
+        
+        createButtonActionListener = new CreateButtonActionListener(this,adminFrame);
+        cancelButtonActionListener = new CancelButtonActionListener(this);
+        spinnerChangeValueListener = new JSpinnerChangeValueListener(this);
+        
+        Font f = new Font("Century", Font.BOLD, 18);
+
+        len = createPanel.topics.size();
+        maxTempId = 0;
+        //setLayout(new GridLayout(len , 2 , 300 , 300));
+        setLayout(null);
+
+        
+        
+        questionsPerTopic = createPanel.totalQuestions / len;
+        remainingQuestions = createPanel.totalQuestions % len;
+        questionNumbers = new int[len];
+        
+        for (int j = 0; j < len; j++) {
+            if (j < remainingQuestions) {
+                questionNumbers[j] = questionsPerTopic + 1;
+            } else {
+                questionNumbers[j] = questionsPerTopic;
+            }
+        }
+        topicsLabel = new JLabel[len];
+        numberSpinner = new JSpinner[len];
+        
+        for (int i = 0; i < len; i++) {
+            String temp = createPanel.topics.get(i);
+            topicsLabel[i] = new JLabel(temp);
+            int defaultValue = questionNumbers[i];
+            numberSpinner[i] = new JSpinner(new SpinnerNumberModel(
+                            new Integer(questionNumbers[i]),
+                            new Integer(1),
+                            new Integer(createPanel.totalQuestions - len - 1),
+                            new Integer(1)
+            ));
+            topicsLabel[i].setFont(f);
+            topicsLabel[i].setBounds(50, (20 + i * 80), 280, 40);
+            add(topicsLabel[i]);
+            numberSpinner[i].setFont(f);
+            numberSpinner[i].setBounds(500, (20 + i * 80), 90, 30);
+            add(numberSpinner[i]);
+            numberSpinner[i].addChangeListener(spinnerChangeValueListener);
+        }
+        
+        int sum = 0;
+        for(int i = 0 ; i < len ; i++)
+        {
+            int temp;
+            temp = (int) numberSpinner[i].getValue();
+            sum += temp;
+        }
+        
+        totalQuestionsLabel = new JLabel("TOTAL QUESTIONS..");
+        totalQuestionsLabel.setBounds(50 , 400 , 300 , 50);
+        totalQuestionsLabel.setFont(f);
+        add(totalQuestionsLabel);
+        
+        userQuestionsLabel = new JLabel("YOUR TOTAL .. ");
+        userQuestionsLabel.setBounds(50 , 460 , 300 , 50);
+        userQuestionsLabel.setFont(f);
+        add(userQuestionsLabel);
+        
+        displayTotalLabel = new JLabel(Integer.toString(createPanel.totalQuestions));
+        displayTotalLabel.setBounds(500 , 400 , 70 , 50);
+        displayTotalLabel.setFont(f);
+        add(displayTotalLabel);
+        
+        displayUserSelectedLabel = new JLabel(Integer.toString(sum));
+        displayUserSelectedLabel.setFont(f);
+        displayUserSelectedLabel.setBounds(500 , 460 , 70 , 50);
+        add(displayUserSelectedLabel);
+        
+        createButton = new JButton("CREATE");
+        createButton.setBounds(250, 500, 150 , 50);
+        createButton.setFont(f);
+        createButton.addActionListener(createButtonActionListener);
+        add(createButton);
+        
+        cancelButton = new JButton("CANCEL");
+        cancelButton.setBounds(430, 500, 150, 50);
+        cancelButton.addActionListener(cancelButtonActionListener);
+        cancelButton.setFont(f);
+        add(cancelButton);
+    }
+
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+    }// </editor-fold>//GEN-END:initComponents
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
+}
